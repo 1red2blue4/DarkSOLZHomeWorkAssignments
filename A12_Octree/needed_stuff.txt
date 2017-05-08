@@ -1,0 +1,12 @@
+std::vector<MyBOClass*> allBoundingObjects;
+Octree* parent;
+Octree* allChildren[8];
+int depthLevel;
+float maxX;
+float maxY;
+float maxZ;
+float minX;
+float minY;
+float minZ;
+vector3 centerLocal;
+vector3 centerGlobal;
