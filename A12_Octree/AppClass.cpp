@@ -16,7 +16,7 @@ void AppClass::InitVariables(void)
 
 	m_pBOMngr = MyBOManager::GetInstance();
 
-	m_nInstances = 500;
+	m_nInstances = 3500;
 	int nSquare = static_cast<int>(std::sqrt(m_nInstances));
 	m_nInstances = nSquare * nSquare;
 	for (int i = 0; i < nSquare; i++)
@@ -39,7 +39,6 @@ void AppClass::InitVariables(void)
 		matrix4 temp = m_pMeshMngr->GetModelMatrix(sInstances[i]);
 		allM4.push_back(temp);
 		allBO.push_back(m_pBOMngr->GetBoundingObject(i));
-		//std::cout << "X: " << temp[3][0] << std::endl << "Y: " << temp[3][1] << std::endl << "Z: " << temp[3][2] << std::endl;
 	}
 
 	myOctree = new Octree(allM4, allBO, 3);
@@ -88,11 +87,17 @@ void AppClass::Update(void)
 	int nFPS = m_pSystem->GetFPS();
 	//print info into the console
 	printf("FPS: %d            \r", nFPS);//print the Frames per Second
+	m_pMeshMngr->PrintLine("");
 	//Print info on the screen
 	std::vector<int> list = m_pBOMngr->GetCollidingVector(0);
 	m_pMeshMngr->PrintLine("");//Add a line on top
 	m_pMeshMngr->Print("FPS:");
 	m_pMeshMngr->Print(std::to_string(nFPS), RERED);
+
+	m_pMeshMngr->PrintLine("Toggles: ");
+	m_pMeshMngr->Print("  Octree: O ("); if (usingOctree) { m_pMeshMngr->Print("On"); }	else { m_pMeshMngr->Print("Off"); } m_pMeshMngr->PrintLine(")");
+	m_pMeshMngr->Print("  Render: R ("); if (renderOctree) { m_pMeshMngr->Print("On"); } else { m_pMeshMngr->Print("Off"); } m_pMeshMngr->PrintLine(")");
+	m_pMeshMngr->Print("  Calculate: C ("); if (calcOctree) { m_pMeshMngr->Print("On"); } else { m_pMeshMngr->Print("Off"); } m_pMeshMngr->PrintLine(")");
 }
 
 void AppClass::Display(void)
@@ -113,6 +118,10 @@ void AppClass::Release(void)
 	delete myOctree;
 	for (int i = 0; i < allBO.size(); i++)
 	{
+		if (allBO[i] != nullptr)
+		{
+			allBO[i] = nullptr;
+		}
 		delete allBO[i];
 	}
 }

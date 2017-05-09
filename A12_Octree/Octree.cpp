@@ -75,7 +75,7 @@ Octree::Octree(std::vector<matrix4> encasedObjs, std::vector<MyBOClass*> objsBOs
 				m_v3Min.z = temp[3][2] - objsBOs[i]->GetMin().z;
 			}
 
-			std::cout << "X: " << temp[3][0] << std::endl << "Y: " << temp[3][1] << std::endl << "Z: " << temp[3][2] << std::endl;
+			//std::cout << "X: " << temp[3][0] << std::endl << "Y: " << temp[3][1] << std::endl << "Z: " << temp[3][2] << std::endl;
 		}
 
 		m_centerLocal = (m_v3Max + m_v3Min) / 2.0f;
@@ -409,21 +409,41 @@ void Octree::PushAllBOToOctree()
 
 Octree::~Octree()
 {
-	MeshManagerSingleton::ReleaseInstance();
-	for (int i = 0; i < allBoundingObjects.size(); i++)
-	{
-		delete allBoundingObjects[i];
-	}
-	delete octreeBO;
-	delete parent;
 	for (int i = 0; i < 8; i++)
 	{
-		if (allChildren[i] != nullptr)
+		if (allChildren[i] != nullptr && depthLevel != 0)
+		{
+			allChildren[i]->~Octree();
+			allChildren[i] = nullptr;
+		}
+		else if (allChildren[i] != nullptr)
 		{
 			allChildren[i] = nullptr;
 		}
 	}
-	delete[] allChildren;
+	MeshManagerSingleton::ReleaseInstance();
+	for (int i = 0; i < allBoundingObjects.size(); i++)
+	{
+		if (allBoundingObjects[i] != nullptr)
+		{
+			allBoundingObjects[i] = nullptr;
+		}
+		//delete allBoundingObjects[i];
+	}
+
+	if (octreeBO != nullptr)
+	{
+		octreeBO = nullptr;
+	}
+	delete octreeBO;
+
+	if (parent != nullptr)
+	{
+		parent = nullptr;
+	}
+	delete parent;
+	
+	//delete allChildren;
 	
 
 }

@@ -495,8 +495,8 @@ bool MyBOClass::IsColliding(MyBOClass* const a_pOther)
 	if (bColliding == false)
 		return false;
 
-	return true;
-	//return SAT(a_pOther);
+	//return true;
+	return SAT(a_pOther);
 }
 
 void MyBOClass::SetColor(vector3 color) { m_v3Color = color; }
